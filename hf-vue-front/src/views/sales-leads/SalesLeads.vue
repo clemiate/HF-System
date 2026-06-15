@@ -36,6 +36,22 @@ const statusOptions = [
   '待跟进', '跟进中', '建立联系', '待报价', '试运营', '合作中', '已转化', '价格未达成', '无效线索'
 ]
 
+// 搜索字段配置
+const searchFields = [
+  { prop: 'companyName', label: '客户名称', placeholder: '请输入公司名称', type: 'input' },
+  { prop: 'status', label: '跟进状态', placeholder: '请选择状态', type: 'select', options: statusOptions }
+]
+
+// 对话框基础文本输入项配置
+const formInputFields = [
+  { prop: 'companyName', label: '公司名称', placeholder: '请输入公司名称' },
+  { prop: 'contactName', label: '联系人', placeholder: '请输入联系人' },
+  { prop: 'role', label: '职务', placeholder: '请输入职务' },
+  { prop: 'phone', label: '联系电话', placeholder: '请输入联系电话' },
+  { prop: 'source', label: '来源', placeholder: '请输入来源' },
+  { prop: 'businessType', label: '业务类型', placeholder: '请输入业务类型' }
+]
+
 // 基础表格列配置
 const tableColumns = [
   { prop: 'companyName', label: '公司名称', minWidth: '120', tooltip: true },
@@ -218,12 +234,10 @@ onMounted(() => {
       <!-- 搜索与操作区域 -->
       <div class="header-actions">
         <el-form :inline="true" :model="searchQuery" class="search-form">
-          <el-form-item label="客户名称">
-            <el-input v-model="searchQuery.companyName" placeholder="请输入公司名称" clearable />
-          </el-form-item>
-          <el-form-item label="跟进状态">
-            <el-select v-model="searchQuery.status" placeholder="请选择状态" clearable style="width: 150px">
-              <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
+          <el-form-item v-for="field in searchFields" :key="field.prop" :label="field.label">
+            <el-input v-if="field.type === 'input'" v-model="(searchQuery as any)[field.prop]" :placeholder="field.placeholder" clearable />
+            <el-select v-else-if="field.type === 'select'" v-model="(searchQuery as any)[field.prop]" :placeholder="field.placeholder" clearable style="width: 150px">
+              <el-option v-for="opt in field.options" :key="opt" :label="opt" :value="opt" />
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -288,34 +302,9 @@ onMounted(() => {
     >
       <el-form :model="formConfig" :rules="rules" ref="formRef" label-width="100px">
         <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="公司名称" prop="companyName">
-              <el-input v-model="formConfig.companyName" placeholder="请输入公司名称" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="联系人" prop="contactName">
-              <el-input v-model="formConfig.contactName" placeholder="请输入联系人" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="职务" prop="role">
-              <el-input v-model="formConfig.role" placeholder="请输入职务" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="联系电话" prop="phone">
-              <el-input v-model="formConfig.phone" placeholder="请输入联系电话" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="来源" prop="source">
-              <el-input v-model="formConfig.source" placeholder="请输入来源" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="业务类型" prop="businessType">
-              <el-input v-model="formConfig.businessType" placeholder="请输入业务类型" />
+          <el-col :span="12" v-for="field in formInputFields" :key="field.prop">
+            <el-form-item :label="field.label" :prop="field.prop">
+              <el-input v-model="(formConfig as any)[field.prop]" :placeholder="field.placeholder" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
